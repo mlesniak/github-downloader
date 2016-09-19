@@ -17,6 +17,13 @@
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
         </dependency>
+
+        <!--"com.github.nscala-time" %% "nscala-time" % "2.14.0"-->
+        <dependency>
+            <groupId>com.github.nscala-time</groupId>
+            <artifactId>nscala-time_2.11</artifactId>
+            <version>2.14.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
