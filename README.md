@@ -17,6 +17,10 @@ This simple program will download all files from [githubarchive.org](githubarchi
 The application will download all files to the directory `data/`. 
 On each run, it will start anew, although already existing files are not downloaded.
 
+## Source code quality
+
+Note that the source code is hacky and just a simple script to download the necessary files.
+
 ## License
         
 Copyright (c) 2016 Michael Lesniak, licensed under the Apache License.        
