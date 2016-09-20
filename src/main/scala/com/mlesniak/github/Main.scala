@@ -53,8 +53,7 @@ object Main extends App {
       } else {
         println(s"Existing    $path")
       }
-
-      jodaDate = jodaDate + 1.day
     }
+    jodaDate = jodaDate + 1.day
   }
 }
