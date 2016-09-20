@@ -1,6 +1,6 @@
 # Introduction
 
-This simple program will download all files from [githubarchive.org](githubarchive.org). This website contains
+This simple program will download all files from [githubarchive.org](http://githubarchive.org). This website contains
 
 - Activity archives starting 2/12/2011
 - Activity archives for dates between 2/12/2011-12/31/2014, recorded from the (now deprecated) Timeline API
