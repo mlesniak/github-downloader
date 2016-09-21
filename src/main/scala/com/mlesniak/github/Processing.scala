@@ -1,5 +1,7 @@
 package com.mlesniak.github
 
+import org.apache.spark.sql.{SaveMode, SparkSession}
+
 //import org.apache.spark.sql.SparkSession
 
 /**
@@ -8,28 +10,27 @@ package com.mlesniak.github
   * @author Michael Lesniak (mlesniak@micromata.de)
   */
 object Processing extends App {
-  //  val spark = SparkSession
-  //    .builder()
-  //    .appName("Spark SQL Example")
-  //    .master("local[*]")
-  //    // .config("spark.some.config.option", "some-value")
-  //    .getOrCreate()
-  //
-  //
-  //  val path = "data/2011-02-12-0.json"
-  //  val github = spark.read.json(path)
-  //
-  //  github.printSchema()
-  //  github.createOrReplaceTempView("github")
-  //  val repos = spark.sql("SELECT repo.name, count(repo.name) FROM github group by repo.name order by count(repo.name) " +
-  //    "desc")
-  //  repos.show()
-  //
-  //  val rows = repos.rdd
-  //  println(rows)
-  //
-  //  val grdd = github.rdd
-  //  println(grdd)
+  val spark = SparkSession
+    .builder()
+    .appName("Spark SQL Example")
+    .master("local[*]")
+    .getOrCreate()
 
-  // User, event, time
+
+  val path = "data/2011-02-12-0.json"
+  val github = spark.read.json(path)
+
+  github.createOrReplaceTempView("github")
+  github.cache()
+
+  val logins = spark.sql("select distinct actor.login from github")
+  logins.show()
+
+  logins.foreach(row => {
+    // Store all data for a given user.
+    val username = row(0)
+    println(s"Processing $username")
+    val userData = github.filter(s"actor.login = '$username'")
+    userData.write.mode(SaveMode.Overwrite).json(s"data/out/$username")
+  })
 }
