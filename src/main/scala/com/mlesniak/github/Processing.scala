@@ -38,6 +38,10 @@ object Processing extends App {
     })
   }
 
-  partitionByLogin()
+  // partitionByLogin()
+
+  // Example how to read over all files
+  //val reads = sql.read.json("data/out/*/*")
+  //println(reads.count())
 }
 
