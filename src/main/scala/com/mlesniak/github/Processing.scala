@@ -1,6 +1,9 @@
 package com.mlesniak.github
 
-import org.apache.spark.sql.{SaveMode, SparkSession}
+import org.apache.spark.sql.{SQLContext, SaveMode}
+import org.apache.spark.{SparkConf, SparkContext}
+
+//import org.apache.spark.sql.{SaveMode, SparkSession}
 
 //import org.apache.spark.sql.SparkSession
 
@@ -10,32 +13,31 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
   * @author Michael Lesniak (mlesniak@micromata.de)
   */
 object Processing extends App {
-  val spark = SparkSession
-    .builder()
-    .appName("Spark SQL Example")
-    .master("local[1]")
-    .getOrCreate()
-
-
   val path = "data/2011-02-12-0.json"
-  val github = spark.read.json(path)
 
-  github.createTempView("github")
+  val conf = new SparkConf()
+    .setMaster("local[*]")
+    .setAppName("Spark")
+  val sc = new SparkContext(conf)
+  val sql = new SQLContext(sc)
+
+  val github = sql.read.json(path)
+  github.registerTempTable("github")
   github.persist()
 
-  val logins = spark.sql("select distinct actor.login from github")
-  logins.persist()
-  val loginCount = logins.count()
-  println(s"Number of logins $loginCount")
 
-  // See https://stackoverflow.com/questions/33030726/how-to-iterate-records-spark-scala for the motivation behind
-  // using collect().
-  // TODO ML Examine reason for collect() deeper.
-  logins.collect().foreach(row => {
-    val username = row(0)
-    println(s"Writing $username")
-    val userData = spark.sql(s"select * from github where actor.login = '$username'")
-    userData.write.mode(SaveMode.Overwrite).json(s"data/out/$username")
-  })
+  def partitionByLogin() = {
+    val logins = sql.sql("select distinct actor.login from github").collect()
+    logins.foreach(row => {
+      val login = row(0)
+      val userData = github.filter(s"actor.login = '$login'")
+
+      // For debugging purposes we use JSON. Later we'll use parquet.
+      // userData.write.mode(SaveMode.Overwrite).parquet("data/out/" + login)
+      userData.write.mode(SaveMode.Overwrite).json("data/out/" + login)
+    })
+  }
+
+  partitionByLogin()
 }
 

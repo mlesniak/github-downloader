@@ -21,6 +21,11 @@ On each run, it will start anew, although already existing files are not downloa
 
 Note that the source code is hacky and just a simple script to download the necessary files.
 
+## TODO
+
+- Group files by user for playing around (as json first)
+- Convert JSON to Parquet for further processing
+
 ## License
         
 Copyright (c) 2016 Michael Lesniak, licensed under the Apache License.        
