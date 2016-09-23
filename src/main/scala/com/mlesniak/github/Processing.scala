@@ -13,20 +13,18 @@ import org.apache.spark.{SparkConf, SparkContext}
   * @author Michael Lesniak (mlesniak@micromata.de)
   */
 object Processing extends App {
-  val path = "data/2011-02-12-0.json"
-
   val conf = new SparkConf()
     .setMaster("local[*]")
     .setAppName("Spark")
   val sc = new SparkContext(conf)
   val sql = new SQLContext(sc)
 
-  val github = sql.read.json(path)
-  github.registerTempTable("github")
-  github.persist()
-
 
   def partitionByLogin() = {
+    val path = "data/2011-02-12-0.json"
+    val github = sql.read.json(path)
+    github.registerTempTable("github")
+    github.persist()
     val logins = sql.sql("select distinct actor.login from github").collect()
     logins.foreach(row => {
       val login = row(0)
