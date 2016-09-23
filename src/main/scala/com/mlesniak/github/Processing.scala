@@ -45,11 +45,28 @@ object Processing extends App {
     events.show()
   }
 
-  // partitionByLogin()
-  //createEvents
 
-  // Example how to read over all files
-  //val reads = sql.read.json("data/out/*/*")
-  //println(reads.count())
+  def convertToParquet(): Unit = {
+    val rawPath = "hdfs:///user/mlesniak/github/"
+    val parquetPath = "hdfs:///user/mlesniak/github-parquet/"
+    //    val rawPath = "data/*"
+    //    val parquetPath = "data-parquet/"
+    val rawData = sql.read.json(rawPath)
+    rawData.write.mode(SaveMode.Overwrite).parquet(parquetPath)
+  }
+
+  //  scala> sqlContext.sql("select created_at, actor.login, cat[2] from github lateral view explode(payload.shas) v1 as cat").show
+  // sqlContext.sql("select created_at, actor.login, cat[2] from github lateral view explode(payload.shas) v1 as cat where type='PushEvent' and actor.login = 'jameswilson'").show(100)
+
+  def commits(username: String): Unit = {
+    val rawPath = "hdfs:///user/mlesniak/commits-"
+    val commits = sql.sql("" +
+      s"select created_at, actor.login, cat[2] from github lateral view explode(payload.shas) v1 " +
+      s"as cat " + s"where type='PushEvent' and actor.login = '$username'")
+    commits.write.mode(SaveMode.Overwrite).parquet(rawPath + username)
+  }
+
+  println("working")
+  //   convertToParquet()
 }
 
