@@ -21,6 +21,10 @@ On each run, it will start anew, although already existing files are not downloa
 
 Note that the source code is hacky and just a simple script to download the necessary files.
 
+## Spark SQL statements
+
+    scala> sqlContext.sql("select created_at, actor.login, cat[2] from github lateral view explode(payload.shas) v1 as cat").show
+
 ## TODO
 
 - Group files by user for playing around (as json first)
