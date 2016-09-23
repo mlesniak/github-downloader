@@ -38,15 +38,18 @@ object Processing extends App {
     })
   }
 
+  def createEvents(): Unit = {
+    val userPath = "data/out/*/*"
+    val userData = sql.read.json(userPath)
+    val events = userData.select("actor.login", "type", "created_at")
+    events.show()
+  }
+
   // partitionByLogin()
+  //createEvents
 
   // Example how to read over all files
   //val reads = sql.read.json("data/out/*/*")
   //println(reads.count())
-
-  val userPath = "data/out/*/*"
-  val userData = sql.read.json(userPath)
-  val events = userData.select("actor.login", "type", "created_at")
-  events.show()
 }
 
